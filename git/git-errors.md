@@ -15,12 +15,16 @@ src refspec 이 뭔지 몰라서 검색해보니
 > refspec은 _.git/config_ 파일에   
 "+ _원격 저장소 Refs 패턴_ : _로컬 저장소 Refs 패턴_" 형식으로 저장되어 있음.
 
-
 자세한 내용은   
 Attlassian Tutorial: https://www.atlassian.com/git/tutorials/refs-and-the-reflog#refspecs   
 Git SCM: https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EB%82%B4%EB%B6%80-Refspec
 
-git
+
+## 즉, 로컬 저장소와 원격 저장소의 branch가 맞지 않다는 것
+
+> $ git pull
+
+나는 원격 저장소와 로컬 저장소를 merge 시키셔서 문제를 해결했다.
 
 ---
 
