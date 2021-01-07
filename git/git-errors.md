@@ -20,7 +20,7 @@ src refspec 이 뭔지 몰라서 검색해보니
 Attlassian Tutorial: https://www.atlassian.com/git/tutorials/refs-and-the-reflog#refspecs   
 Git SCM: https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EB%82%B4%EB%B6%80-Refspec
 
-
+git
 
 ---
 
