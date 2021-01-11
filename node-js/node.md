@@ -1,6 +1,7 @@
 # Node.js
 
 ## 1. Node.js 란?
+
 <pre>
 JavaScript로 확장성 있는 네트워크 애플리케이션 개발에 사용되는 소프트웨어 플랫폼이다. (출저 wiki)
 </pre>
@@ -20,15 +21,20 @@ Node.js를 서버 구축 등의 코드를 실행할 수 있게 해주는 런타�
 
 ---
 
+
 ## 2. Node.js 핵심구조
 
 <pre>V8 Engine + Libuv library</pre>
 
+
 ### 2.1. V8 javascript engine
+
 구글에서 개발한 오픈소스 JavaScript 엔진   
 V8 엔진을 통해 Node.js는 JavaScript를 인식한다.(크롬 브라우저도 JavaScript 처리 엔진으로 V8을 사용함)
 
+
 ### 2.2. Libuv library
+
 Non-blocking I/O 처리를 위해 이벤트 루프를 제공한다.   
 한마디로 Node.js의 비동기 처리는 이 라이브러리를 통해 이루어지고 있다.
 
@@ -36,7 +42,9 @@ Non-blocking I/O 처리를 위해 이벤트 루프를 제공한다.
 
 ---
 
+
 ## 3. 싱글 스레드? Non-blocking? 이벤트 루프?
+
 여러 글을 읽어보고 종합해보자면
 <pre>
 Node.js는 싱글 스레드 기반 Non-blocking I/O를 지원하는 런타임 환경
@@ -44,10 +52,8 @@ Node.js는 싱글 스레드 기반 Non-blocking I/O를 지원하는 런타임 �
 
 런타임 환경은 알겠는데, 싱글 스레드가 어쨌고 Non-blocking은 무슨 소리인지 이해가 안가더라.
 
-### 3.1. 싱글 스레드
 
-엄밀히 따지면 V8엔진과 Libuv는 각각 다른 스레드**를 사용하고 있기 때문에 싱글 스레드가 아니다.
-단지 V8 엔진의 콜 스택에서 하나의 스레드를 사용하고 있기 때문에 싱글 스레드 기반이라고 하는 것 같다.
+### 3.1. 싱글 스레드**
 
 ** 스레드란? 기본적으로 CPU의 코어 당 한 번에 업무를 담당하여 처리할 수 있는데, 이 코어를 논리적으로 2개로 나눈 기술이 Intel의 Hyper Threading 기술이다.
 
@@ -55,4 +61,64 @@ Node.js는 싱글 스레드 기반 Non-blocking I/O를 지원하는 런타임 �
 
 ** Amd는 SMT라고 부른다.
 
-### 3.2. Non-blocking
+Node.js는 하나의 스레드를 이용하여 일을 처리한다.
+
+멀티 스레드의 단점
+1. **물리적 스레드 수의 한계**로인한 동시로 처리할 수 있는 서비스의 수
+2. 각 스레드 간의 작업 처리 순서와 공유 자원에 대한 접근 컨트롤을 해주기 위한 **동기화** 작업
+3. IO*** 효율, 클라이언트에 할당된 스레드에서 IO 호출 시 할당된 스레드는 대기 상태(wait)로 빠지게 된다.
+
+***Input/Output(입출력), 그래서 IO라고 하다.
+
+엄밀히 따지면 비동기 처리를 하기 위해서 다른 스레드를 사용하기 때문에 싱글 스레드는 아니라고 한다.
+
+
+### 3.2. Non-blocking I/O
+
+이전 코드 블럭(작업)이 끝날때까지 대기한 후 바로 다음 작업으로 진행하는 방식을 동기(Synchronous) / Blocking 방식이라고 하는데,
+
+비동기(Asynchronous) / Non-blocking은 이전 코드 블럭(작업)이 완료될때까지 기다리지 않고 바로 다음 작업을 수행한다. 비동기(Asynchronous) 처리와 비슷한 개념이다.
+
+아래는 Blcoking 방식과 Non-blocking 방식을 처리하는 예제이다.
+
+> console.log( 'start' );   
+function foo() {   
+    setTimeout( function () {   
+        console.log( 'foo' );
+    }, 5000 );
+}   
+foo();   
+console.log( 'end' );
+
+setTimeout은 첫번째 인자로 콜백함수를 받고 두번째 인자로 시간(1000분의 1초)을 받는다.
+
+위의 코드가 Blocking(동기) 방식으로 실행된다면, 첫번째 console.log( 'start' )의 작업이 끝난 후 foo 함수를 정의하고 foo함수의 호출이 끝나면 console.log( 'end' ); 가 실행될 것이다. 결과는 아래와 같다.
+
+> start   
+> foo   
+> end
+
+콘솔 창에 start가 실행되고, 5초 뒤 foo가 실행된 후 마지막으로 end가 실행된다.
+하지만 자바스크립트는 Non-blocking 방식의 프로그래밍 언어이기 때문에 아래와 같이 출력된다.
+
+> start   
+> end   
+> foo
+
+Non-blocking(비동기)은 첫번째 console.log( 'start' ); 코드 블럭을 호출한 후 작업이 끝날때까지 기다리지 않고 바로 다음 foo 함수를 정의한다. foo 함수가 호출된 후 마찬가지로 작업이 끝날때까지 기다리지 않고 console.log( 'end' ); 코드 블럭을 호출한 후 foo 함수가 작업이 끝나면 console.log( 'foo' );를 호출한다.
+
+호출된 함수는 V8엔진의 Call-Stack의 스택으로 쌓이게 된다.(참고로 크롬 브라우저의 개발자 도구에 자바스크립트 디버깅 툴에 보면 Call Stack을 확인할 수 있다.)
+
+위의 코드가 Call-Stack에 쌓이게 되는 순서는 아래와 같다.
+
+Call-Stack
+- Step1: console.log( 'start' )
+- Step2: foo()
+- Step3: foo(), console.log( 'end' )
+- Step3: foo()
+- Step4: (호출 완료)
+
+### 3.3. Event-loop(이벤트 루프)
+
+자바스크립트는 신기하게도 싱글 스레드 기반이지만 여러작업을 동시에 처리하는 Non-blocking / 비동기(Asynchronous) 방식으로 프로그래밍을 하는데 이를 가능케 해주는 것이 Event-loop 이다.
+
