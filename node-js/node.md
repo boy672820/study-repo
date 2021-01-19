@@ -122,3 +122,12 @@ Call-Stack
 
 자바스크립트는 신기하게도 싱글 스레드 기반이지만 여러작업을 동시에 처리하는 Non-blocking / 비동기(Asynchronous) 방식으로 프로그래밍을 하는데 이를 가능케 해주는 것이 Event-loop 이다.
 
+![Alt text](./node-structure.png "Node.js 구조")
+
+A. 비동기 함수(setTimeout) 처리를 위해 Event-loop 생성   
+B. UV_IO를 통해 커널에서 비동기 함수를 처리한다.   
+C. 비동기 함수 처리가 완료되면, Callback 함수는 Event-loop를 통해 콜스택에서 처리한다.
+
+이벤트 루프 요약
+
+비동기 함수는 UV_IO를 통해 커널(OS에서 지원하는 비동기 처리 시스템)에 넘겨주고, 작업이 끝나면 콜백 함수를 다시 콜스택으로 넘겨주는 역활을 한다.
